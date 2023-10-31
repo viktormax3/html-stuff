@@ -1,0 +1,245 @@
+<html>
+<head>
+	<!-- Agrega Bootstrap 5.3 -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<style>
+	.badge-pill-primary {
+padding: 0.35em 0.65em;
+font-size: 0.75em;
+font-weight: 700;
+line-height: 1;
+color: #fff;
+text-align: center;
+white-space: nowrap;
+vertical-align: baseline;
+border-radius: 50rem;
+background-color: #ff6900;
+display: inline-flex;
+align-items: center;
+}
+/* Cambia el color de texto de los nav-pills por defecto */
+.nav-pills .nav-link {
+  color: #5c8a36; /* Elige el color que quieras */
+}
+
+/* Cambia el color de fondo y de texto de los nav-pills al pasar el ratón o hacer clic */
+.nav-pills .nav-link:hover,
+.nav-pills .nav-link:focus,
+.nav-pills .nav-link.active {
+  background-color: #8cbf69; /* Elige el color que quieras */
+  color: white; /* Elige el color que quieras */
+}
+
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+					<ul class="nav nav-pills nav-justified" id="nav-tab" role="tablist">
+						<li class="nav-item">
+						<button class="nav-link" id="home-tab" data-bs-toggle="tab" data-bs-target="#movies" type="button" role="tab" aria-controls="movies-tab" aria-selected="true">
+							Peliculas
+						</button>
+					</li>
+					<li class="nav-item">
+						<button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#books" type="button" role="tab" aria-controls="books-tab" aria-selected="false">
+							Libros
+						</button>
+					</li>
+					<li class="nav-item">
+						<button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#games" type="button" role="tab" aria-controls="games-tab" aria-selected="false">Juegos</button>
+					</li>
+					</ul>
+				<div class="tab-content mt-1" id="nav-tabContent">
+					<div class="tab-pane fade btn-group-toggle" data-toggle="buttons" id="movies" role="tabpanel" aria-labelledby="home-tab">
+					</div>
+					<div class="tab-pane fade btn-group-toggle" data-toggle="buttons" id="books" role="tabpanel" aria-labelledby="profile-tab">
+					</div>
+					<div class="tab-pane fade btn-group-toggle" data-toggle="buttons" id="games" role="tabpanel" aria-labelledby="contact-tab">
+					</div>
+				</div>
+			<div>
+				<!-- Crea un elemento <div> con la clase .alert para mostrar los intereses seleccionados -->
+				<div class="alert alert-info" role="alert" style="display:none">
+					Intereses seleccionados: 
+					<!-- Crea un elemento <div> con un id para contener los elementos <span> -->
+					<div id="interests-container"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Agrega el código JavaScript para obtener los intereses seleccionados y mostrarlos en el elemento <div> -->
+	<script>
+	// Arrays de intereses
+	const movies = [
+		['The Matrix', 1999],
+		['Inception', 2010],
+		['Interstellar', 2014],
+		['Batman', 1989],
+		['Spiderman', 2002]
+	];
+	const books = [
+		['El principito', 1943],
+		['Cien años de soledad', 1967],
+		['El alquimista', 1988],
+		['Harry Potter y la piedra filosofal', 1997],
+		['El código Da Vinci', 2003]
+	];
+	const games = [
+		['Super Mario Bros', 1985],
+		['The Legend of Zelda: Ocarina of Time', 1998],
+		['Half-Life 2', 2004],
+		['Portal', 2007],
+		['Minecraft', 2011]
+	];
+	let grupo = 0; // esta es la variable global que almacena el número de grupo
+	// Generar inputs
+	// Creamos un arreglo que contiene los arreglos de las categorías y sus nombres
+	const categorias = [
+		[movies, 'movies', 'checkbox'],
+		[books, 'books', 'checkbox'],
+		[games, 'games', 'radio']
+	];
+	// Hacemos un forEach para llamar a la función generateInputs con cada subarreglo
+	categorias.forEach(categoria => {
+		// La función recibe el subarreglo como argumento
+		// Usamos la desestructuración de arreglos para asignar los valores a las variables
+		let [interests, containerName, type] = categoria;
+		// Llamamos a la función generateInputs con las variables
+		generateInputs(interests, containerName, type);
+	});
+	// Función para asignar atributos 
+	function generateInputs(interests, containerName, type) {
+		const container = document.getElementById(containerName);
+		interests.forEach((interest, index) => {
+			// Crear input
+			const input = document.createElement('input');
+			const inputConfig = {
+				type: type,
+				class: 'btn-check',
+				id: `grupo${grupo}_${index + 1}`, // usamos el número de grupo y el índice para crear el id
+				'data-label': interest[0]
+			};
+			if (type == 'radio') {
+				input.name = `grupo${grupo}`;
+			}
+			setAttributes(input, inputConfig);
+			// Crear label
+			const label = document.createElement('label');
+			const labelConfig = {
+				for: input.id,
+				class: 'btn btn-primary me-1 mb-1'
+			};
+			setAttributes(label, labelConfig);
+			label.textContent = interest[0] + ' ';
+			// Crear span
+			const span = document.createElement('span');
+			span.textContent = interest[1]; // Asignamos el año como texto del span
+			// Agregar span al label
+			label.appendChild(span);
+			container.appendChild(input);
+			container.appendChild(label);
+		});
+		grupo++; // incrementamos el número de grupo cada vez que se llama a la función
+	}
+	// Función para asignar atributos 
+	function setAttributes(element, attributes) {
+		Object.keys(attributes).forEach(attr => {
+			element.setAttribute(attr, attributes[attr]);
+		});
+	}
+	// Crea una clase para manejar los checkboxes
+	class CheckboxesManager {
+		constructor() {
+			// Selecciona todos los elementos <input> por su tipo
+			this.checkboxes = document.querySelectorAll('.btn-check[type="checkbox"]');
+			// Selecciona el elemento <div> por su id
+			this.interestsContainer = document.querySelector('#interests-container');
+			// Selecciona el elemento <div> con la clase alert
+			this.alert = document.querySelector('.alert');
+		}
+		init() {
+			// Recorre los elementos <input>
+			this.checkboxes.forEach(checkbox => {
+				// Añade un evento change a cada elemento <input> para que se ejecute una función cuando cambie su estado
+				checkbox.addEventListener('change', () => {
+					this.handleChange(checkbox);
+				});
+			});
+		}
+		handleChange(checkbox) {
+			// Obtiene el valor del elemento <input>
+			const value = checkbox.dataset.label;
+			let span = this.interestsContainer.querySelector(`[data-value="${value}"]`);
+			// Si no hay un elemento <span> con el mismo valor
+			if (!span) {
+				// Crea un nuevo elemento <span> con el valor del elemento <input>
+				span = this.createSpan(value);
+				// Añade el nuevo elemento <span> al elemento <div> que contiene los intereses
+				this.interestsContainer.appendChild(span);
+				// Añade un evento click al elemento <span> para que se ejecute una función cuando se haga clic en él
+				span.addEventListener('click', () => {
+					this.updateAlert()
+					this.interestsContainer.removeChild(span);
+					checkbox.checked = false;
+				})
+			} else {
+				// Elimina el elemento <span> existente
+				this.interestsContainer.removeChild(span);
+			}
+			this.updateAlert();
+		}
+		createSpan(value) {
+			// Crea un nuevo elemento <span>
+			const span = document.createElement('span');
+			// Define los atributos del elemento <span>
+			const attributes = {
+				'data-value': value,
+				class: 'badge-pill-primary me-1 my-1',
+				'data-bs-theme': 'dark'
+			};
+			// Asigna los atributos al elemento <span>
+			setAttributes(span, attributes);
+			// Asigna el valor del elemento <input> como el texto del elemento <span>
+			span.textContent = value;
+			// Crea un nuevo elemento <button>
+			const button = document.createElement('button');
+			// Define los atributos del elemento <button>
+			button.type = 'button';
+			button.classList.add('btn-close');
+			button.setAttribute('aria-label', 'Close');
+			// Añade el elemento <button> al elemento <span> como hijo
+			span.appendChild(button);
+			// Devuelve el elemento <span> creado
+			return span;
+		}
+		updateAlert() {
+			// Obtiene el número total de elementos <span> en el elemento <div> que contiene los intereses
+			const totalInterests = this.interestsContainer.querySelectorAll('span').length;
+			// Si hay más de un interés seleccionado
+			if (totalInterests > 1) {
+				// Muestra el elemento <div> con la clase alert
+				this.alert.style.display = 'block';
+			} else {
+				// Oculta el elemento <div> con la clase alert
+				this.alert.style.display = 'none';
+			}
+		}
+	}
+	// Crea una función para asignar varios atributos a un elemento
+	function setAttributes(element, attributes) {
+		// Recorre las claves del objeto attributes
+		Object.keys(attributes).forEach(attr => {
+			// Asigna cada atributo y su valor al elemento
+			element.setAttribute(attr, attributes[attr]);
+		});
+	}
+	// Crea una instancia de la clase CheckboxesManager
+	const manager = new CheckboxesManager();
+	// Inicializa la instancia
+	manager.init();
+	</script>
+</body>
+</html>
